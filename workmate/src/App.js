@@ -1,15 +1,12 @@
 import './App.css';
+import Whiteboard from './Whiteboard.js';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-      </header>
-    </div>
-  );
+    return (
+        <div className="App">
+            <Whiteboard />
+        </div>
+    );
 }
 
 export default App;
