@@ -9,7 +9,7 @@ const App = () => {
   const [fabricCanvas, setFabricCanvas] = useState(null);
   const defaultBackgroundColor = "#e5e7eb";
 
-  // using penColor for toggling between pen and eraser.
+  // State for pen color and eraser toggle
   const [penColor, setPenColor] = useState("black");
   const [toggleEraser, setToggleEraser] = useState(false);
 
@@ -21,7 +21,7 @@ const App = () => {
     }
   };
 
-  // pen tool 
+  // Select the pen tool by setting the brush color to black
   const selectPen = () => {
     if (fabricCanvas) {
       changePenColor("black");
@@ -29,7 +29,7 @@ const App = () => {
     }
   };
 
-  //erase tool 
+  // Select the eraser tool by setting the brush color to the background color
   const selectEraser = () => {
     if (fabricCanvas) {
       changePenColor(defaultBackgroundColor);
@@ -41,7 +41,12 @@ const App = () => {
     <div>
       <Navbar  />
       <div className="absolute top-20 left-4 z-20">
-        <Toolbox selectPen={selectPen} selectEraser={selectEraser} />
+        <Toolbox
+          selectPen={selectPen}
+          selectEraser={selectEraser}
+          changePenColor={changePenColor}
+          penColor={penColor}
+        />
       </div>
         <Whiteboard canvasRef={canvasRef} setFabricCanvas={setFabricCanvas} />
     </div>
