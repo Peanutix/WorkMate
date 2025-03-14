@@ -20,8 +20,8 @@ const App = () => {
       fabricCanvas.renderAll();
     }
   };
-
-  // Select the pen tool by setting the brush color to black
+  // test
+  // pen tool 
   const selectPen = () => {
     if (fabricCanvas) {
       changePenColor("black");
