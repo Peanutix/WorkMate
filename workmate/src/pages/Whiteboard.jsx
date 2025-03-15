@@ -1,46 +1,73 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { fabric } from "fabric";
-import Toolbox from "../components/Toolbox";
 
-const Whiteboard = ({ canvasRef, setFabricCanvas, selectPen, selectEraser, changePenColor, penColor}) => {
+function Whiteboard({ socket, username, currentLobby }) {
+  const canvasRef = useRef(null);
+  const [fabricCanvas, setFabricCanvas] = useState(null);
+  const [lobbyUsers, setLobbyUsers] = useState([]);
+
   useEffect(() => {
-    // Guard: if canvasRef isn't attached, do nothing
-    if (!canvasRef.current) return;
-    
+    // Setup Fabric canvas
     const canvas = new fabric.Canvas(canvasRef.current, {
       backgroundColor: "#e5e7eb",
       width: window.innerWidth,
       height: window.innerHeight,
-      isDrawingMode: true,
+      isDrawingMode: true
     });
-
     setFabricCanvas(canvas);
 
     return () => {
       canvas.dispose();
     };
-  }, [canvasRef, setFabricCanvas]);
+  }, []);
+
+  // Listen for "lobby_update;user1,user2" from the server
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleMessage = (event) => {
+      const data = event.data;
+      if (data.startsWith("lobby_update;")) {
+        const [, userListStr] = data.split(";");
+        // userListStr might be "Ahmed,Alice,Bob"
+        const userArray = userListStr ? userListStr.split(",") : [];
+        setLobbyUsers(userArray);
+      }
+    };
+
+    socket.addEventListener("message", handleMessage);
+
+    // cleanup
+    return () => {
+      socket.removeEventListener("message", handleMessage);
+    };
+  }, [socket]);
 
   return (
-    <>
-    <div className="bg-[#e5e7eb] p-5">
-
-      <Toolbox
-        
-        selectPen={selectPen}
-        selectEraser={selectEraser}
-        changePenColor={changePenColor}
-        penColor={penColor}
-        />
-        </div>
-      <div className="relative w-full h-screen rounded-md">
-        <canvas
-          ref={canvasRef}
-          className="absolute top-0 left-0 w-full h-full"
-          ></canvas>
+    <div style={{ display: "flex" }}>
+      {/* Sidebar / queue list */}
+      <div
+        style={{
+          width: "200px",
+          backgroundColor: "#f0f0f0",
+          borderRight: "1px solid #ccc",
+          padding: "10px"
+        }}
+      >
+        <h3>Lobby: {currentLobby}</h3>
+        <ul>
+          {lobbyUsers.map((user, idx) => (
+            <li key={idx}>{user}</li>
+          ))}
+        </ul>
       </div>
-    </>
+
+      {/* The actual canvas */}
+      <div style={{ flexGrow: 1 }}>
+        <canvas ref={canvasRef} />
+      </div>
+    </div>
   );
-};
+}
 
 export default Whiteboard;
