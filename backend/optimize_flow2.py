@@ -4,23 +4,13 @@ from tenacity import retry, wait_exponential, stop_after_attempt
 import orjson
 
 # Define the API endpoint. (Include link from Langflow)
-url = "(YOUR OWN API ENDPOINT URL)"
+url = "(YOUR OWN ENDPOINT URL)"
 
 # Define the headers
 headers = {
     "Content-Type": "application/json",
-    "Authorization": "Bearer (YOUR OWN APPLICAION KEY)",  # Replace with your valid token
+    "Authorization": "Bearer (YOUR OWN APPLICATION TOKEN)",  # Replace with your valid token
     "Accept-Encoding": "gzip",  # Enable compression
-}
-
-user_prompt = input("Type a prompt: ")
-
-# Define the payload (request body)
-payload = {
-    "input_value": user_prompt,
-    "output_type": "chat",
-    "input_type": "chat",
-    "tweaks": {},  # Minimize payload
 }
 
 # Retry with exponential backoff
@@ -32,7 +22,7 @@ async def make_api_call(session, url, headers, payload):
         data = await response.read()  # Read the response as bytes
         return orjson.loads(data)  # Parse JSON using orjson
 
-async def main():
+async def main(payload):
     # Use a connection pool and HTTP/2
     async with aiohttp.ClientSession(
         connector=aiohttp.TCPConnector(force_close=True, enable_cleanup_closed=True)
@@ -48,12 +38,26 @@ async def main():
             results = first_output.get("outputs", [])
             if results:
                 message = results[0].get("results", {}).get("message", {})
+                #Final AI Agent Output
                 text = message.get("text", "No output text found.")
-                print("Langflow response:", text)
+                return text
             else:
                 print("No results found in the response.")
         else:
             print("No outputs found in the response.")
 
-# Run the asynchronous function
-asyncio.run(main())
+
+'''
+Main function that is used when exporting
+'''
+#Use this function to run the full API call
+def request_response(user_input):
+    # Define the payload (request body)
+    export_payload = {
+        "input_value": user_input,
+        "output_type": "chat",
+        "input_type": "chat",
+        "tweaks": {},  # Minimize payload
+    }
+    return asyncio.run(main(export_payload))
+    
