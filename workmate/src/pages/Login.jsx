@@ -1,6 +1,6 @@
 import React from 'react';
 // import { useHistory } from "react-router-dom";
-import logo from './workmate_logo2.png';
+import logo from '../assets/workmate_logo2.png';
 
 const Login = () => {
     // const history = useHistory();

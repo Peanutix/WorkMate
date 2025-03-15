@@ -8,7 +8,7 @@ const Navbar = ( ) => {
 
           <div>
             <h1 className='text-xl font-bold text-white'>
-              The Whiteboard
+              workmate
             </h1>
           </div>
         </div>

@@ -1,8 +1,11 @@
 import React, { useRef, useState } from "react";
 import Navbar from "./components/Navbar";
-import Whiteboard from "./components/Whiteboard";
+import Whiteboard from "./pages/Whiteboard";
 import Toolbox from "./components/Toolbox";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { fabric } from "fabric";
+import Login from "./pages/Login";
+import Lobby from "./pages/Lobby";
 
 const App = () => {
   const canvasRef = useRef(null);
@@ -20,8 +23,8 @@ const App = () => {
       fabricCanvas.renderAll();
     }
   };
-  // test
-  // pen tool 
+
+  // Pen tool: select the pen (black color)
   const selectPen = () => {
     if (fabricCanvas) {
       changePenColor("black");
@@ -29,7 +32,7 @@ const App = () => {
     }
   };
 
-  // Select the eraser tool by setting the brush color to the background color
+  // Eraser tool: select the eraser (set brush color to background)
   const selectEraser = () => {
     if (fabricCanvas) {
       changePenColor(defaultBackgroundColor);
@@ -38,18 +41,25 @@ const App = () => {
   };
 
   return (
-    <div>
-      <Navbar  />
+    <Router>
+      <Navbar />
       <div className="absolute top-20 left-4 z-20">
-        <Toolbox
-          selectPen={selectPen}
-          selectEraser={selectEraser}
-          changePenColor={changePenColor}
-          penColor={penColor}
-        />
+
       </div>
-        <Whiteboard canvasRef={canvasRef} setFabricCanvas={setFabricCanvas} />
-    </div>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/lobby" element={<Lobby />} />
+        <Route
+          path="/whiteboard"
+          element={<Whiteboard canvasRef={canvasRef} setFabricCanvas={setFabricCanvas}
+            changePenColor={changePenColor}
+            selectPen={selectPen}
+            selectEraser={selectEraser}
+            penColor={penColor}
+           />}
+        />
+      </Routes>
+    </Router>
   );
 };
 
