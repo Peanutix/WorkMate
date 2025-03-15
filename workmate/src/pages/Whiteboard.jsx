@@ -3,6 +3,7 @@ import { fabric } from "fabric";
 import Queue from "../components/Queue";
 import Toolbox from "../components/Toolbox";
 import Prompt from "../components/Prompt";
+import ChatRoom from "../components/ChatRoom"; // Import the ChatRoom component
 
 function Whiteboard({ socket, username, currentLobby }) {
   const canvasRef = useRef(null);
@@ -88,26 +89,28 @@ function Whiteboard({ socket, username, currentLobby }) {
   }, [socket]);
 
   return (
-    <>
-      {/* Sidebar / Queue */}
-      <div className="flex">
+      <>
+        {/* Sidebar / Queue */}
+        <div className="flex">
+          <Queue currentLobby={currentLobby} lobbyUsers={lobbyUsers} />
 
-        <Queue currentLobby={currentLobby} lobbyUsers={lobbyUsers} />
-
-        {/* Drawing area */}
-        <div className="flex-grow relative h-screen">
-          {/* Toolbox with local color/pen/eraser functions */}
-          <Prompt></Prompt>
-          <Toolbox
-            changePenColor={changePenColor}
-            selectPen={selectPen}
-            selectEraser={selectEraser}
-            penColor={penColor}
-          />
-          <canvas ref={canvasRef} className="w-full h-full" />
+          {/* Drawing area */}
+          <div className="flex-grow relative h-screen">
+            {/* Toolbox with local color/pen/eraser functions */}
+            <Prompt />
+            <Toolbox
+                changePenColor={changePenColor}
+                selectPen={selectPen}
+                selectEraser={selectEraser}
+                penColor={penColor}
+            />
+            <canvas ref={canvasRef} className="w-full h-full" />
+          </div>
         </div>
-      </div>
-    </>
+
+        {/* Chat Room (Floating) */}
+        <ChatRoom />
+      </>
   );
 }
 
