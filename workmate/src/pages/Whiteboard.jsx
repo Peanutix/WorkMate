@@ -15,6 +15,7 @@ function Whiteboard({ socket, username, currentLobby, data }) {
   const defaultBackgroundColor = "#e5e7eb";
   const [isEraserOn, setIsEraserOn] = useState(false);
 
+
   // -- Functions for pen and eraser:
   const changePenColor = (color) => {
     if (fabricCanvas) {
@@ -69,7 +70,10 @@ function Whiteboard({ socket, username, currentLobby, data }) {
 
   // send updated canvas to all users
   useEffect(() => {
+
   if (fabricCanvas) {
+    fabricCanvas.freeDrawingBrush.width = 12
+
     fabricCanvas.on("mouse:up", (event) => {
       const canvasImage = fabricCanvas.toDataURL({ format: "png" }); // Convert canvas to image (Base64)
 
