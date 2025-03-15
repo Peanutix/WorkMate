@@ -8,7 +8,7 @@ const Login = () => {
     const navigate = useNavigate()
 
     function navigateToWhiteboard(){
-        navigate("../pages/Whiteboard.jsx")
+        navigate("/whiteboard")
     }
 
 
