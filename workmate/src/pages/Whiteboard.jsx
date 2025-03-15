@@ -70,22 +70,24 @@ function Whiteboard({ socket, username, currentLobby }) {
   // send updated canvas to all users
   useEffect(() => {
     if (fabricCanvas) {
-
-      fabricCanvas.on('object:added', (e) => {
-        console.log("Object added:", e);  // Log the modification event
+      fabricCanvas.on("object:added", (e) => {
+        console.log("Object added:", e); // Log the modification event
         const objectData = e.target.toObject();
         const drawingData = {
           type: "drawing",
           objectData,
-          username
+          username,
         };
 
-        socket.send("drawing;" + JSON.stringify({ action: 'drawing', data: drawingData, lobby: currentLobby }));
+        socket.send(
+            "drawing;" +
+            JSON.stringify({ action: "drawing", data: drawingData, lobby: currentLobby })
+        );
         console.log("Sent drawing data:", drawingData);
       });
 
       return () => {
-        fabricCanvas.off('object:added');
+        fabricCanvas.off("object:added");
       };
     }
   }, [fabricCanvas]);
@@ -117,7 +119,7 @@ function Whiteboard({ socket, username, currentLobby }) {
           {/* Drawing area */}
           <div className="flex-grow relative h-screen">
             {/* Toolbox with local color/pen/eraser functions */}
-            <Prompt />
+            <Prompt socket={socket} username={username} currentLobby={currentLobby} />
             <Toolbox
                 changePenColor={changePenColor}
                 selectPen={selectPen}

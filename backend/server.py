@@ -96,46 +96,63 @@ def message_received(client, server, message):
         login(client, server, data)
 
     elif context == "join_lobby":
-        user_obj = None
-        for u in users:
-            if u.client['id'] == client['id']:
-                user_obj = u
-                break
-        if not user_obj:
-            print("[SERVER] Error: user not found in join_lobby")
-        else:
+        user_obj = next((u for u in users if u.client['id'] == client['id']), None)
+        if user_obj:
             join_lobby(user_obj, server, data)
+        else:
+            print("[SERVER] Error: user not found in join_lobby")
 
     elif context == "leave_lobby":
-        user_obj = None
-        for u in users:
-            if u.client['id'] == client['id']:
-                user_obj = u
-                break
-        if not user_obj:
-            print("[SERVER] Error: user not found in leave_lobby")
-        else:
+        user_obj = next((u for u in users if u.client['id'] == client['id']), None)
+        if user_obj:
             leave_lobby(user_obj, server, user_obj.lobby_code)
+        else:
+            print("[SERVER] Error: user not found in leave_lobby")
 
     elif context == "send_text_chat":
-        pass
-        # Example: you could broadcast chat messages to the lobby
+        # Find the user who sent the message
+        user_obj = next((u for u in users if u.client['id'] == client['id']), None)
+        if user_obj and user_obj.lobby_code:
+            lobby_name = user_obj.lobby_code
+            lobby_users = user_lobbies[lobby_name]
+
+            # Construct the message format
+            chat_message = f"chat;{user_obj.username}: {data}"
+
+            # Send the message to all users in the same lobby
+            for u in lobby_users:
+                server.send_message(u.client, chat_message)
+        else:
+            print("[SERVER] Error: user not in a lobby or not found")
+
+    elif context == "publish_question":
+        # Find the user who sent the question
+        user_obj = next((u for u in users if u.client['id'] == client['id']), None)
+        if user_obj and user_obj.lobby_code:
+            lobby_name = user_obj.lobby_code
+            lobby_users = user_lobbies[lobby_name]
+
+            # Construct the question message format
+            question_message = f"question;{user_obj.username}: {data}"
+
+            # Broadcast the question to all users in the same lobby
+            for u in lobby_users:
+                server.send_message(u.client, question_message)
+            print(f"[SERVER] Broadcasting question to lobby {lobby_name}: {question_message}")
+        else:
+            print("[SERVER] Error: user not in a lobby or not found")
 
     elif context == "return_login":
-
-        user_obj = None
-        for u in users:
-            if u.client['id'] == client['id']:
-                user_obj = u
-                users.remove(user_obj)
-                break
-        if not user_obj:
-            print("[SERVER] Error: user not found in join_lobby")
+        user_obj = next((u for u in users if u.client['id'] == client['id']), None)
+        if user_obj:
+            users.remove(user_obj)
+        else:
+            print("[SERVER] Error: user not found in return_login")
 
     elif context == "drawing":
         print(data)
 
-    # Echo back to sender so they know the server processed it
+    # Echo back to sender for confirmation
     server.send_message(client, f"Echo: {message}")
 
 def update_lobby_user_list(server):
