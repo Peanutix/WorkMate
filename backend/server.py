@@ -325,15 +325,29 @@ async def handler(websocket, path):
 
 
 if __name__ == '__main__':
-    print("[SERVER] Starting up...")
-    start_server = websockets.serve(handler, "0.0.0.0", 8000)
+    async def main():
+        start_server = await websockets.serve(handler, "0.0.0.0", 8000)
+        print("[SERVER] Server started")
+
+        # Start the periodic user update task
+        asyncio.create_task(update_lobby_user_list())
+
+        # Keep the server running
+        await start_server.wait_closed()
+
+
+    asyncio.run(main())  # Use asyncio.run() for proper event loop management
+
+
+    # print("[SERVER] Starting up...")
+    # start_server = websockets.serve(handler, "0.0.0.0", 8000)
 
     # Create an event loop and start the server
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(start_server)
-
-    # Start the periodic user update
-    loop.create_task(update_lobby_user_list())
-
-    print("[SERVER] Server started")
-    loop.run_forever()
+    # loop = asyncio.get_event_loop()
+    # loop.run_until_complete(start_server)
+    #
+    # # Start the periodic user update
+    # loop.create_task(update_lobby_user_list())
+    #
+    # print("[SERVER] Server started")
+    # loop.run_forever()
