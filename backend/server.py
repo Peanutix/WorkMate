@@ -152,8 +152,7 @@ async def handler(websocket, path):
 
 if __name__ == '__main__':
     async def main():
-        start_server = await websockets.serve(handler, "3.107.255.250", 8000)
-        # start_server = await websockets.serve(handler, "0.0.0.0", 8000)
+        start_server = await websockets.serve(handler, "0.0.0.0", 8000)
         print("[SERVER] Server started")
 
         # Start the periodic user update task
