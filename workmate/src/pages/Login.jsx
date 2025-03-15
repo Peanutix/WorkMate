@@ -1,7 +1,17 @@
 import React from 'react';
 import logo from '../assets/workmate_logo2.png';
+import { useNavigate } from "react-router-dom";
+
 
 const Login = () => {
+
+    const navigate = useNavigate()
+
+    function navigateToWhiteboard(){
+        navigate("../pages/Whiteboard.jsx")
+    }
+
+
     return (
         <div className="flex justify-center items-center h-screen bg-blue-500 font-inter text-lg">
             <div className="flex flex-col items-center text-center w-full">
@@ -20,6 +30,7 @@ const Login = () => {
                     />
                     <button 
                         className="w-full p-2 mt-2 bg-blue-600 text-white rounded-md text-base font-semibold hover:bg-blue-700"
+                        onClick={navigateToWhiteboard}
                     >
                         Sign In
                     </button>
