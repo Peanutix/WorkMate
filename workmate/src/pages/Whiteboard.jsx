@@ -1,20 +1,48 @@
 import React, { useEffect, useRef, useState } from "react";
 import { fabric } from "fabric";
+import Queue from "../components/Queue";
+import Toolbox from "../components/Toolbox";
 
 function Whiteboard({ socket, username, currentLobby }) {
   const canvasRef = useRef(null);
   const [fabricCanvas, setFabricCanvas] = useState(null);
   const [lobbyUsers, setLobbyUsers] = useState([]);
 
+  // -- Add these local states for pen/eraser:
+  const [penColor, setPenColor] = useState("black");
+  const defaultBackgroundColor = "#e5e7eb";
+  const [isEraserOn, setIsEraserOn] = useState(false);
 
+  // -- Functions for pen and eraser:
+  const changePenColor = (color) => {
+    if (fabricCanvas) {
+      fabricCanvas.freeDrawingBrush.color = color;
+      setPenColor(color);
+      fabricCanvas.renderAll();
+    }
+  };
 
+  const selectPen = () => {
+    if (fabricCanvas) {
+      changePenColor("black");
+      setIsEraserOn(false);
+    }
+  };
+
+  const selectEraser = () => {
+    if (fabricCanvas) {
+      changePenColor(defaultBackgroundColor);
+      setIsEraserOn(true);
+    }
+  };
+
+  // -- Initialize FabricJS Canvas:
   useEffect(() => {
-    // Setup Fabric canvas
     const canvas = new fabric.Canvas(canvasRef.current, {
-      backgroundColor: "#e5e7eb",
+      backgroundColor: defaultBackgroundColor,
       width: window.innerWidth,
       height: window.innerHeight,
-      isDrawingMode: true
+      isDrawingMode: true,
     });
     setFabricCanvas(canvas);
 
@@ -23,7 +51,23 @@ function Whiteboard({ socket, username, currentLobby }) {
     };
   }, []);
 
-  // Listen for "lobby_update;user1,user2" from the server
+  // -- Listen for window resize events to adjust canvas
+  useEffect(() => {
+    if (!fabricCanvas) return;
+
+    const handleResize = () => {
+      fabricCanvas.setWidth(window.innerWidth);
+      fabricCanvas.setHeight(window.innerHeight);
+      fabricCanvas.renderAll();
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [fabricCanvas]);
+
+  // -- Listen for lobby updates
   useEffect(() => {
     if (!socket) return;
 
@@ -31,44 +75,36 @@ function Whiteboard({ socket, username, currentLobby }) {
       const data = event.data;
       if (data.startsWith("lobby_update;")) {
         const [, userListStr] = data.split(";");
-        // userListStr might be "Ahmed,Alice,Bob"
         const userArray = userListStr ? userListStr.split(",") : [];
         setLobbyUsers(userArray);
       }
     };
 
     socket.addEventListener("message", handleMessage);
-
-    // cleanup
     return () => {
       socket.removeEventListener("message", handleMessage);
     };
   }, [socket]);
 
   return (
-    <div style={{ display: "flex" }}>
-      {/* Sidebar / queue list */}
-      <div
-        style={{
-          width: "200px",
-          backgroundColor: "#f0f0f0",
-          borderRight: "1px solid #ccc",
-          padding: "10px"
-        }}
-      >
-        <h3>Lobby: {currentLobby}</h3>
-        <ul>
-          {lobbyUsers.map((user, idx) => (
-            <li key={idx}>{user}</li>
-          ))}
-        </ul>
-      </div>
+    <>
+      {/* Sidebar / Queue */}
+      <div className="flex">
+        <Queue currentLobby={currentLobby} lobbyUsers={lobbyUsers} />
 
-      {/* The actual canvas */}
-      <div style={{ flexGrow: 1 }}>
-        <canvas ref={canvasRef} />
+        {/* Drawing area */}
+        <div className="flex-grow relative h-screen">
+          {/* Toolbox with local color/pen/eraser functions */}
+          <Toolbox
+            changePenColor={changePenColor}
+            selectPen={selectPen}
+            selectEraser={selectEraser}
+            penColor={penColor}
+          />
+          <canvas ref={canvasRef} className="w-full h-full" />
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
