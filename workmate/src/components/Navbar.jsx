@@ -8,30 +8,45 @@ const Navbar = ( { leaveLobbyFunc, lobby } ) => {
   const navigate = useNavigate()
 
 
+
+
+  function navigateToLobby(){
+    leaveLobbyFunc()
+    navigate("/lobby")
+  }
+
+
   function navigateToLogin(){
     leaveLobbyFunc()
     navigate("/")
   }
 
   return (
-    <div>
+    <>
       <nav className='p-2 border-solid border-gray-600 bg-black'>
         <div className='flex items-center justify-between'>
-
-          <div>
-            {/* <h1 className='text-xl font-bold text-white'>
-              workmate
-            </h1> */}
+            
+            {/* Logo */}
             <div className='flex items-center justify-start cursor-pointer'
             onClick={navigateToLogin}
             >
              <img src={logo} alt="Logo" className="  w-[200px]  invert" 
              />
             </div>
-          </div>
+
+            {/* Button to go from Whiteboard to Lobby  */}
+            <div>
+
+              <button 
+              onClick={navigateToLobby}
+              className="text-white bg-blue-400 p-2 rounded-lg">
+              Return to Lobby  
+              </button> 
+            </div>
+
         </div>
       </nav>
-    </div>
+    </>
   );
 };
 

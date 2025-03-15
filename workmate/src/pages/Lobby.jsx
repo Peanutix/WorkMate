@@ -21,7 +21,7 @@ function Lobby({ socket, username, setCurrentLobby, isConnected }) {
 
   return (
     <div className="bg-[#3C8EFA] h-screen flex flex-col items-center pt-5">
-      <h1 className="text-white text-2xl mb-4">Welcome, {username}!</h1>
+      <h1 className="text-white text-2xl mb-4">Welcome Join Any Session!</h1>
       <button
         onClick={() => handleJoinLobby("maths")}
         className="bg-white p-5 my-3 w-[80%] text-center text-lg rounded-lg shadow-md hover:bg-[#007bff] hover:text-white"
