@@ -1,52 +1,24 @@
 import React from "react";
 
 const Lobby = () => {
-    return (
-        <div style={styles.body}>
-            <div style={styles.lobbyContainer}>
-                <div style={styles.room}>Maths</div>
-                <div style={styles.room}>Biology</div>
-                <div style={styles.room}>Physics</div>
-                <div style={styles.room}>Chemistry</div>
-            </div>
+  return (
+    <div className="font-sans bg-[#3C8EFA] m-0 p-0">
+      <div className="flex flex-col justify-start items-center p-5 h-screen">
+        <div className="bg-white border border-gray-300 p-5 my-3 w-[80%] text-center text-lg rounded-lg shadow-md cursor-pointer hover:bg-[#007bff] hover:text-white active:bg-[#0056b3]">
+          Maths
         </div>
-    );
-};
-
-const styles = {
-    body: {
-        fontFamily: 'Inter, sans-serif',
-        backgroundColor: '#3C8EFA',
-        margin: 0,
-        padding: 0,
-    },
-    lobbyContainer: {
-        display: 'flex',
-        flexDirection: 'column', // Stack the rooms vertically
-        justifyContent: 'flex-start', // Align the rooms from the top
-        alignItems: 'center', // Center the rooms horizontally
-        padding: '20px',
-        height: '100vh', // Full height of the screen
-    },
-    room: {
-        backgroundColor: '#ffffff',
-        border: '1px solid #ccc',
-        padding: '20px',
-        margin: '10px 0',
-        width: '80%',
-        textAlign: 'center',
-        fontSize: '18px',
-        borderRadius: '8px',
-        boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
-        cursor: 'pointer',
-    },
-    roomHover: {
-        backgroundColor: '#007bff',
-        color: 'white',
-    },
-    roomActive: {
-        backgroundColor: '#0056b3',
-    },
+        <div className="bg-white border border-gray-300 p-5 my-3 w-[80%] text-center text-lg rounded-lg shadow-md cursor-pointer hover:bg-[#007bff] hover:text-white active:bg-[#0056b3]">
+          Biology
+        </div>
+        <div className="bg-white border border-gray-300 p-5 my-3 w-[80%] text-center text-lg rounded-lg shadow-md cursor-pointer hover:bg-[#007bff] hover:text-white active:bg-[#0056b3]">
+          Physics
+        </div>
+        <div className="bg-white border border-gray-300 p-5 my-3 w-[80%] text-center text-lg rounded-lg shadow-md cursor-pointer hover:bg-[#007bff] hover:text-white active:bg-[#0056b3]">
+          Chemistry
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default Lobby;
