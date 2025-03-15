@@ -2,13 +2,14 @@ import React from 'react';
 import logo from '../assets/workmate_logo2.png';
 import { useNavigate } from "react-router-dom";
 
-const Navbar = ( ) => {
+const Navbar = ( { leaveLobbyFunc, lobby } ) => {
 
 
   const navigate = useNavigate()
 
 
   function navigateToLogin(){
+    leaveLobbyFunc()
     navigate("/")
   }
 

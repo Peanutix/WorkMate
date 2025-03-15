@@ -111,7 +111,7 @@ def message_received(client, server, message):
         if not user_obj:
             print("[SERVER] Error: user not found in leave_lobby")
         else:
-            leave_lobby(user_obj, server, data)
+            leave_lobby(user_obj, server, user_obj.lobby_code)
 
     elif context == "send_text_chat":
         pass
@@ -120,11 +120,23 @@ def message_received(client, server, message):
     # Echo back to sender so they know the server processed it
     server.send_message(client, f"Echo: {message}")
 
+def update_lobby_user_list(server):
+    """Periodically send updates to all users in each lobby."""
+    while True:
+        for lobby_name, lobby_users in user_lobbies.items():
+            # Only broadcast if there are users in the lobby
+            if lobby_users:
+                broadcast_lobby_update(server, lobby_name)
+
 if __name__ == '__main__':
     print("[SERVER] Starting up...")
     server = websocket_server.WebsocketServer(host="0.0.0.0", port=8000)
     server.set_fn_new_client(new_client)
     server.set_fn_message_received(message_received)
     server.set_fn_client_left(client_left)
+
+    update_thread = threading.Thread(target=update_lobby_user_list, args=(server, ))
+    update_thread.daemon = True
+    update_thread.start()
     server.run_forever()
     print("[SERVER] Server ended")

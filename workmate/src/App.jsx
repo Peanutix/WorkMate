@@ -24,7 +24,10 @@ const App = () => {
   const [currentLobby, setCurrentLobby] = useState("");
   const [isConnected, setIsConnected] = useState(false);
 
-  
+  const handleLeaveLobby = (lobby) => {
+    socket.send("leave_lobby;" + lobby)
+  }
+
   const changePenColor = (color) => {
     if (fabricCanvas) {
       fabricCanvas.freeDrawingBrush.color = color;
@@ -48,8 +51,6 @@ const App = () => {
       setToggleEraser(true);
     }
   };
-
-
 
   useEffect(() => {
     // Connect to the backend WebSocket server
@@ -81,11 +82,10 @@ const App = () => {
   }, []);
 
 
-  
 
   return (
     <Router>
-      <Navbar />
+      <Navbar leaveLobbyFunc={handleLeaveLobby} lobby={currentLobby} />
 
       {/* <div className="absolute top-20 left-4 z-20">
         //Toolbox thing dont remove it just in case i move it again - ahmed

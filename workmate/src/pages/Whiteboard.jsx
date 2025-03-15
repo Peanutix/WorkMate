@@ -6,6 +6,8 @@ function Whiteboard({ socket, username, currentLobby }) {
   const [fabricCanvas, setFabricCanvas] = useState(null);
   const [lobbyUsers, setLobbyUsers] = useState([]);
 
+
+
   useEffect(() => {
     // Setup Fabric canvas
     const canvas = new fabric.Canvas(canvasRef.current, {
