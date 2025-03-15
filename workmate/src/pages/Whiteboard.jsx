@@ -5,7 +5,7 @@ import Toolbox from "../components/Toolbox";
 import Prompt from "../components/Prompt";
 import ChatRoom from "../components/ChatRoom"; // Import the ChatRoom component
 
-function Whiteboard({ socket, username, currentLobby }) {
+function Whiteboard({ socket, username, currentLobby, data }) {
   const canvasRef = useRef(null);
   const [fabricCanvas, setFabricCanvas] = useState(null);
   const [lobbyUsers, setLobbyUsers] = useState([]);
@@ -69,34 +69,33 @@ function Whiteboard({ socket, username, currentLobby }) {
 
   // send updated canvas to all users
   useEffect(() => {
-    if (fabricCanvas) {
+  if (fabricCanvas) {
+    fabricCanvas.on("mouse:up", (event) => {
+      const canvasImage = fabricCanvas.toDataURL({ format: "png" }); // Convert canvas to image (Base64)
 
-      fabricCanvas.on('object:added', (e) => {
-        console.log("Object added:", e);  // Log the modification event
-        const objectData = e.target.toObject();
-        const drawingData = {
-          type: "drawing",
-          objectData,
-          username
-        };
-
-        socket.send("drawing;" + JSON.stringify({ action: 'drawing', data: drawingData, lobby: currentLobby }));
-        console.log("Sent drawing data:", drawingData);
-      });
-
-      return () => {
-        fabricCanvas.off('object:added');
+      const drawingData = {
+        type: "drawing",
+        data: canvasImage, // Send as image
+        username,
+        lobby: currentLobby
       };
-    }
-  }, [fabricCanvas]);
+
+      socket.send("drawing$" + JSON.stringify(drawingData)); // Send to WebSocket
+    });
+
+    return () => {
+      fabricCanvas.off("mouse:up");
+    };
+  }
+}, [fabricCanvas]);
 
   // -- Listen for lobby updates
   useEffect(() => {
     if (!socket) return;
     const handleMessage = (event) => {
       const data = event.data;
-      if (data.startsWith("lobby_update;")) {
-        const [, userListStr] = data.split(";");
+      if (data.startsWith("lobby_update$")) {
+        const userListStr = data.split("$")[1];
         const userArray = userListStr ? userListStr.split(",") : [];
         setLobbyUsers(userArray);
       }
@@ -107,6 +106,37 @@ function Whiteboard({ socket, username, currentLobby }) {
       socket.removeEventListener("message", handleMessage);
     };
   }, [socket]);
+
+  // change client canvas with incoming updates
+  useEffect(() => {
+      if (!socket || !fabricCanvas) return;
+      const handleMessage = (event) => {
+        const data = event.data;
+        if (data.startsWith("drawing$")) {
+          try {
+            const drawingData = data.split("$");
+            const parsedData = JSON.parse(drawingData[1]);
+            console.log(parsedData);
+            if (parsedData.data) {
+              fabric.Image.fromURL(parsedData.data, (fabricImg) => {
+                fabricImg.scaleToWidth(fabricCanvas.width); // Scale image to fit
+                fabricImg.scaleToHeight(fabricCanvas.height);
+                fabricCanvas.add(fabricImg); // Add to canvas as an object
+                fabricCanvas.renderAll();
+              });
+            }
+          } catch (error) {
+            console.error("Error processing drawing data:", error);
+          }
+        }
+      };
+
+      socket.addEventListener("message", handleMessage);
+
+      return () => {
+        socket.removeEventListener("message", handleMessage);
+      };
+    }, [socket, fabricCanvas]);
 
   return (
       <>

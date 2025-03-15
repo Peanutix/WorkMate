@@ -19,7 +19,7 @@ function Login({ socket, setUsername, isConnected }) {
     setUsername(localUsername);
 
     // Send login message to server
-    socket.send(`login;${localUsername}`);
+    socket.send(`login$${localUsername}`);
 
     // Now go to the Lobby page
     navigate("/lobby");

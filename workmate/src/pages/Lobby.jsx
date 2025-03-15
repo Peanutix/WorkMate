@@ -10,7 +10,7 @@ function Lobby({ socket, username, setCurrentLobby, isConnected }) {
       return;
     }
     // join the selected lobby
-    socket.send(`join_lobby;${lobbyName}`);
+    socket.send(`join_lobby$${lobbyName}`);
 
     // store the lobby in global state, so Whiteboard knows
     setCurrentLobby(lobbyName);

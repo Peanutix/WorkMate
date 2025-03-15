@@ -11,6 +11,7 @@ const App = () => {
   const [username, setUsername] = useState("");
   const [currentLobby, setCurrentLobby] = useState("");
   const [isConnected, setIsConnected] = useState(false);
+  const [data, setData] = useState("");
 
   // -- Connect to backend WebSocket:
   useEffect(() => {
@@ -27,7 +28,8 @@ const App = () => {
     };
 
     ws.onmessage = (event) => {
-      console.log("[CLIENT] Received:", event.data);
+      // console.log("[CLIENT] Received:", event.data);
+      setData(event.data);
     };
 
     setSocket(ws);
@@ -39,11 +41,11 @@ const App = () => {
     };
   }, []);
 
-  const handleLeaveLobby = (lobby) => {
-    setCurrentLobby("")
+  const handleLeaveLobby = () => {
     if (socket) {
-      socket.send("leave_lobby;" + currentLobby);
+      socket.send("leave_lobby$" + currentLobby);
     }
+    setCurrentLobby("")
   };
 
   return (
@@ -78,6 +80,7 @@ const App = () => {
               socket={socket}
               username={username}
               currentLobby={currentLobby}
+              data={data}
             />
           }
         />

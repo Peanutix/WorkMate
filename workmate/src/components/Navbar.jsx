@@ -19,7 +19,7 @@ const Navbar = ( { leaveLobbyFunc, currentLobby, socket } ) => {
   function navigateToLogin(){
     leaveLobbyFunc()
     navigate("/")
-      socket.send("return_login;")
+      socket.send("return_login$")
   }
 
   return (
