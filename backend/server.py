@@ -16,7 +16,7 @@ class User:
         self.id = id
         self.username = username
         self.client = client  # the underlying client dict from websocket_server
-        self.lobby_code = None
+        self.lobby_code = ""
 
 def broadcast_lobby_update(server, lobby_name):
     """Send the updated list of usernames to everyone in the lobby."""
@@ -46,6 +46,9 @@ def join_lobby(user, server, lobby_name):
     broadcast_lobby_update(server, lobby_name)
 
 def leave_lobby(user, server, lobby_name):
+    if lobby_name == "":
+        return
+
     lobby_list = user_lobbies[lobby_name]
     index = -1
     for i, u in enumerate(lobby_list):
@@ -57,6 +60,7 @@ def leave_lobby(user, server, lobby_name):
         return
 
     removed = lobby_list.pop(index)
+    removed.lobby_code = ""
     print(f"[SERVER] {removed.username} left lobby '{lobby_name}'")
     # broadcast the updated list
     broadcast_lobby_update(server, lobby_name)
@@ -116,6 +120,20 @@ def message_received(client, server, message):
     elif context == "send_text_chat":
         pass
         # Example: you could broadcast chat messages to the lobby
+
+    elif context == "return_login":
+
+        user_obj = None
+        for u in users:
+            if u.client['id'] == client['id']:
+                user_obj = u
+                users.remove(user_obj)
+                break
+        if not user_obj:
+            print("[SERVER] Error: user not found in join_lobby")
+
+    elif context == "drawing":
+        print(data)
 
     # Echo back to sender so they know the server processed it
     server.send_message(client, f"Echo: {message}")

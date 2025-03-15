@@ -2,7 +2,7 @@ import React from 'react';
 import logo from '../assets/workmate_logo2.png';
 import { useNavigate } from "react-router-dom";
 
-const Navbar = ( { leaveLobbyFunc, lobby } ) => {
+const Navbar = ( { leaveLobbyFunc, currentLobby, socket } ) => {
 
 
   const navigate = useNavigate()
@@ -19,6 +19,7 @@ const Navbar = ( { leaveLobbyFunc, lobby } ) => {
   function navigateToLogin(){
     leaveLobbyFunc()
     navigate("/")
+      socket.send("return_login;")
   }
 
   return (
@@ -36,12 +37,11 @@ const Navbar = ( { leaveLobbyFunc, lobby } ) => {
 
             {/* Button to go from Whiteboard to Lobby  */}
             <div>
-
-              <button 
+                {currentLobby !== "" ? <button
               onClick={navigateToLobby}
               className="text-white bg-blue-400 p-2 rounded-lg">
               Return to Lobby  
-              </button> 
+              </button> : null}
             </div>
 
         </div>

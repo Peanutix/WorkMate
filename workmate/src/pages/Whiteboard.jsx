@@ -10,7 +10,7 @@ function Whiteboard({ socket, username, currentLobby }) {
   const [lobbyUsers, setLobbyUsers] = useState([]);
 
   // -- Add these local states for pen/eraser:
-  const [penColor, setPenColor] = useState("black");
+  const [penColor, setPenColor] = useState("#000000");
   const defaultBackgroundColor = "#e5e7eb";
   const [isEraserOn, setIsEraserOn] = useState(false);
 
@@ -25,7 +25,7 @@ function Whiteboard({ socket, username, currentLobby }) {
 
   const selectPen = () => {
     if (fabricCanvas) {
-      changePenColor("black");
+      changePenColor("#000000");
       setIsEraserOn(false);
     }
   };
@@ -46,7 +46,6 @@ function Whiteboard({ socket, username, currentLobby }) {
       isDrawingMode: true,
     });
     setFabricCanvas(canvas);
-
     return () => {
       canvas.dispose();
     };
@@ -55,7 +54,6 @@ function Whiteboard({ socket, username, currentLobby }) {
   // -- Listen for window resize events to adjust canvas
   useEffect(() => {
     if (!fabricCanvas) return;
-
     const handleResize = () => {
       fabricCanvas.setWidth(window.innerWidth);
       fabricCanvas.setHeight(window.innerHeight);
@@ -68,10 +66,32 @@ function Whiteboard({ socket, username, currentLobby }) {
     };
   }, [fabricCanvas]);
 
+  // send updated canvas to all users
+  useEffect(() => {
+    if (fabricCanvas) {
+
+      fabricCanvas.on('object:added', (e) => {
+        console.log("Object added:", e);  // Log the modification event
+        const objectData = e.target.toObject();
+        const drawingData = {
+          type: "drawing",
+          objectData,
+          username
+        };
+
+        socket.send("drawing;" + JSON.stringify({ action: 'drawing', data: drawingData, lobby: currentLobby }));
+        console.log("Sent drawing data:", drawingData);
+      });
+
+      return () => {
+        fabricCanvas.off('object:added');
+      };
+    }
+  }, [fabricCanvas]);
+
   // -- Listen for lobby updates
   useEffect(() => {
     if (!socket) return;
-
     const handleMessage = (event) => {
       const data = event.data;
       if (data.startsWith("lobby_update;")) {

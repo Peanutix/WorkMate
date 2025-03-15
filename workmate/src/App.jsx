@@ -40,14 +40,15 @@ const App = () => {
   }, []);
 
   const handleLeaveLobby = (lobby) => {
+    setCurrentLobby("")
     if (socket) {
-      socket.send("leave_lobby;" + lobby);
+      socket.send("leave_lobby;" + currentLobby);
     }
   };
 
   return (
     <Router>
-      <Navbar leaveLobbyFunc={handleLeaveLobby} lobby={currentLobby} />
+      <Navbar leaveLobbyFunc={handleLeaveLobby} currentLobby={currentLobby} socket={socket} />
       <Routes>
         <Route
           path="/"
