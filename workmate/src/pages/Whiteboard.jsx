@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { fabric } from "fabric";
 import Queue from "../components/Queue";
 import Toolbox from "../components/Toolbox";
+import Prompt from "../components/Prompt";
 
 function Whiteboard({ socket, username, currentLobby }) {
   const canvasRef = useRef(null);
@@ -90,11 +91,13 @@ function Whiteboard({ socket, username, currentLobby }) {
     <>
       {/* Sidebar / Queue */}
       <div className="flex">
+
         <Queue currentLobby={currentLobby} lobbyUsers={lobbyUsers} />
 
         {/* Drawing area */}
         <div className="flex-grow relative h-screen">
           {/* Toolbox with local color/pen/eraser functions */}
+          <Prompt></Prompt>
           <Toolbox
             changePenColor={changePenColor}
             selectPen={selectPen}
