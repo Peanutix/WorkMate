@@ -15,6 +15,7 @@ function Whiteboard({ socket, username, currentLobby, data }) {
   const [penColor, setPenColor] = useState("#000000");
   const defaultBackgroundColor = "#e5e7eb";
   const [isEraserOn, setIsEraserOn] = useState(false);
+    const [penWidth, setPenWidth] = useState(1);
 
 
   // -- Functions for pen and eraser:
@@ -37,6 +38,28 @@ function Whiteboard({ socket, username, currentLobby, data }) {
     if (fabricCanvas) {
       changePenColor(defaultBackgroundColor);
       setIsEraserOn(true);
+    }
+  };
+
+  const changePenWidth = (width) => {
+    if (fabricCanvas) {
+      const parsedWidth = parseInt(width, 10);
+      fabricCanvas.freeDrawingBrush.width = parsedWidth;
+      setPenWidth(parsedWidth);
+      fabricCanvas.renderAll();
+    }
+  };
+
+
+  const downloadBoard = () => {
+    if (fabricCanvas) {
+      const pngData = fabricCanvas.toDataURL("png");
+      const downloadLink = document.createElement("a");
+      const fileName = `whiteBoard-session-${Math.random().toString().replace(".", "")}.png`;
+
+      downloadLink.href = pngData;
+      downloadLink.download = fileName;
+      downloadLink.click();
     }
   };
 
@@ -157,6 +180,13 @@ function Whiteboard({ socket, username, currentLobby, data }) {
                 selectPen={selectPen}
                 selectEraser={selectEraser}
                 penColor={penColor}
+                changePenWidth={changePenWidth}
+
+                penWidth={penWidth}
+                setPenWidth={setPenWidth}
+
+
+                downloadBoard={downloadBoard}
             />
             <canvas ref={canvasRef} className="w-full h-full" />
           </div>
