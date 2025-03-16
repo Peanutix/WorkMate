@@ -1,16 +1,16 @@
-import React from 'react';
-import logo from '../assets/workmate_logo.png';
-import { useNavigate } from "react-router-dom";
+import React from "react";
+import logo from "../assets/workmate_logo.png";
+import {useNavigate} from "react-router-dom";
 
-const Navbar = ({ leaveLobbyFunc, currentLobby, socket }) => {
+const Navbar = ({leaveLobbyFunc, currentLobby, socket}) => {
   const navigate = useNavigate();
 
-  function navigateToLobby(){
+  function navigateToLobby() {
     leaveLobbyFunc();
     navigate("/lobby");
   }
 
-  function navigateToLogin(){
+  function navigateToHome() {
     leaveLobbyFunc();
     navigate("/");
     socket.send("return_login$");
@@ -19,25 +19,28 @@ const Navbar = ({ leaveLobbyFunc, currentLobby, socket }) => {
   return (
     <nav className="p-2 border-solid border-gray-600 bg-black">
       <div className="flex items-center w-full">
-
         {/* Left - Logo */}
-        <div 
+        <div
           className="flex-1 flex items-center justify-start cursor-pointer"
-          onClick={navigateToLogin}
-        >
+          onClick={navigateToHome}>
           <img src={logo} alt="Logo" className="w-[200px] invert" />
         </div>
 
         {/* Center - Links */}
         <div className="flex-1 flex items-center justify-center space-x-6">
-          <div className="hover:text-blue-500 cursor-pointer text-white transition">
+          <div className="hover:text-blue-500 cursor-pointer text-white transition"
+          onClick={navigateToHome}>
             Home
           </div>
+
           <div className="hover:text-blue-500 cursor-pointer text-white transition">
-            Docs
-          </div>
-          <div className="hover:text-blue-500 cursor-pointer text-white transition">
-            GitHub
+            <a
+              href="https://github.com/Peanutix/WorkMate"
+              target="_blank"
+              rel="noopener noreferrer"
+              >
+              GitHub
+            </a>
           </div>
         </div>
 
@@ -46,13 +49,11 @@ const Navbar = ({ leaveLobbyFunc, currentLobby, socket }) => {
           {currentLobby !== "" && (
             <button
               onClick={navigateToLobby}
-              className="text-white bg-blue-400 p-2 rounded-lg"
-            >
+              className="text-white bg-blue-400 p-2 rounded-lg">
               Go to Lobby
             </button>
           )}
         </div>
-
       </div>
     </nav>
   );
