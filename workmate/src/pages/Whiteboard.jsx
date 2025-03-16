@@ -3,7 +3,8 @@ import { fabric } from "fabric";
 import Queue from "../components/Queue";
 import Toolbox from "../components/Toolbox";
 import Prompt from "../components/Prompt";
-import ChatRoom from "../components/ChatRoom"; // Import the ChatRoom component
+import ChatRoom from "../components/ChatRoom";// Import the ChatRoom component
+import AIChatRoom from "../components/AIChatRoom"; // Import the AIChatRoom component
 
 function Whiteboard({ socket, username, currentLobby, data }) {
   const canvasRef = useRef(null);
@@ -161,6 +162,7 @@ function Whiteboard({ socket, username, currentLobby, data }) {
           </div>
         </div>
 
+        <AIChatRoom />
         {/* Chat Room (Floating) */}
         <ChatRoom socket={socket}/>
       </>
