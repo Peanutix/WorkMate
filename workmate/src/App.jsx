@@ -4,6 +4,7 @@ import Whiteboard from "./pages/Whiteboard";
 import Login from "./pages/Login";
 import Lobby from "./pages/Lobby";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import HomePage from "./pages/HomePage";
 
 const App = () => {
   // -- WebSocket states:
@@ -55,6 +56,13 @@ const App = () => {
       <Routes>
         <Route
           path="/"
+          element={
+            <HomePage
+            />
+          }
+        />
+        <Route
+          path="/login"
           element={
             <Login
               socket={socket}

@@ -9,43 +9,39 @@ function Lobby({ socket, username, setCurrentLobby, isConnected }) {
       alert("WebSocket not connected yet!");
       return;
     }
-    // join the selected lobby
+
     socket.send(`join_lobby$${lobbyName}`);
-
-    // store the lobby in global state, so Whiteboard knows
     setCurrentLobby(lobbyName);
-
-    // navigate to the Whiteboard
     navigate("/whiteboard");
   };
 
+  const lobbies = ["Maths", "Biology", "Physics", "Chemistry"];
+
   return (
-    <div className="bg-[#3C8EFA] h-screen flex flex-col items-center pt-5">
-      <h1 className="text-white text-2xl mb-4">Welcome Join Any Session!</h1>
-      <button
-        onClick={() => handleJoinLobby("maths")}
-        className="bg-white p-5 my-3 w-[80%] text-center text-lg rounded-lg shadow-md hover:bg-[#007bff] hover:text-white"
-      >
-        Maths
-      </button>
-      <button
-        onClick={() => handleJoinLobby("biology")}
-        className="bg-white p-5 my-3 w-[80%] text-center text-lg rounded-lg shadow-md hover:bg-[#007bff] hover:text-white"
-      >
-        Biology
-      </button>
-      <button
-        onClick={() => handleJoinLobby("physics")}
-        className="bg-white p-5 my-3 w-[80%] text-center text-lg rounded-lg shadow-md hover:bg-[#007bff] hover:text-white"
-      >
-        Physics
-      </button>
-      <button
-        onClick={() => handleJoinLobby("chemistry")}
-        className="bg-white p-5 my-3 w-[80%] text-center text-lg rounded-lg shadow-md hover:bg-[#007bff] hover:text-white"
-      >
-        Chemistry
-      </button>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-400 to-blue-600 text-white">
+      {/* Logo + Title */}
+      <div className="mb-8 text-center animate-fadeIn">
+        <h1 className="text-4xl font-bold mb-2">Welcome, {username}!</h1>
+        <p className="text-lg text-white/90">
+          Join a session below and start collaborating.
+        </p>
+      </div>
+
+      {/* Lobby Cards */}
+      <div className="w-full max-w-md space-y-4 animate-fadeIn">
+        {lobbies.map((lobby) => (
+          <button
+            key={lobby}
+            onClick={() => handleJoinLobby(lobby.toLowerCase())}
+            className="w-full bg-white text-blue-600 font-semibold py-4 rounded-lg shadow-md hover:bg-blue-700 hover:text-white transition transform hover:scale-[1.02]"
+          >
+            {lobby}
+          </button>
+        ))}
+      </div>
+
+
+
     </div>
   );
 }
