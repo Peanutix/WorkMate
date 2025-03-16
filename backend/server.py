@@ -18,6 +18,13 @@ lobby_drawings = {
     'chemistry': None
 }
 
+lobby_questions = {
+    'maths': "",
+    'biology': "",
+    'physics': "",
+    'chemistry': ""
+}
+
 class User:
     def __init__(self, id, username, websocket):
         self.id = id
@@ -54,8 +61,8 @@ async def join_lobby(user, lobby_name):
     # broadcast the updated list
     await broadcast_lobby_update(lobby_name)
     if lobby_drawings[lobby_name]:
-        print("should update")
         await user.websocket.send("drawing$" + lobby_drawings[lobby_name])
+    await user.websocket.send("publish_question$" + lobby_questions[lobby_name])
 
 
 async def leave_lobby(user, lobby_name):
@@ -112,6 +119,23 @@ async def message_received(websocket, message):
         if user_obj:
             users.remove(user_obj)
 
+    elif context == "publish_question":
+        user_obj = next((u for u in users if u.websocket == websocket), None)
+        if user_obj and user_obj.lobby_code:
+            lobby_name = user_obj.lobby_code
+            lobby_users = user_lobbies[lobby_name]
+
+            # Construct the question message format
+            lobby_questions[lobby_name] = data
+
+            # Broadcast the question to all users in the same lobby
+            for user in lobby_users:
+                await user.websocket.send(f"publish_question${lobby_questions[lobby_name]}")
+            print(f"[SERVER] Broadcasting question to lobby {lobby_name}: {lobby_questions[lobby_name]}")
+        else:
+            print("[SERVER] Error: user not in a lobby or not found")
+
+
     elif context == "drawing":
         drawing_data = json.loads(data)  # Parse JSON drawing data
         lobby_name = drawing_data.get("lobby")
@@ -134,7 +158,7 @@ async def update_lobby_user_list():
         await asyncio.sleep(1)
 
 
-async def handler(websocket, path):
+async def handler(websocket):
     try:
         async for message in websocket:
             await message_received(websocket, message)

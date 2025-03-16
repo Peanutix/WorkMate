@@ -120,7 +120,6 @@ function Whiteboard({ socket, username, currentLobby, data }) {
           try {
             const drawingData = data.split("$");
             const parsedData = JSON.parse(drawingData[1]);
-            console.log(parsedData);
             if (parsedData.data) {
               fabric.Image.fromURL(parsedData.data, (fabricImg) => {
                 fabricImg.scaleToWidth(fabricCanvas.width); // Scale image to fit
@@ -151,7 +150,7 @@ function Whiteboard({ socket, username, currentLobby, data }) {
           {/* Drawing area */}
           <div className="flex-grow relative h-screen">
             {/* Toolbox with local color/pen/eraser functions */}
-            <Prompt />
+            <Prompt socket={socket} />
             <Toolbox
                 changePenColor={changePenColor}
                 selectPen={selectPen}

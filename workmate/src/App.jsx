@@ -15,8 +15,8 @@ const App = () => {
 
   // -- Connect to backend WebSocket:
   useEffect(() => {
-    const ws = new WebSocket("ws://3.107.255.250:8000");
-    // const ws = new WebSocket("ws://localhost:8000");
+    // const ws = new WebSocket("ws://3.107.255.250:8000");
+    const ws = new WebSocket("ws://localhost:8000");
 
     ws.onopen = () => {
       console.log("[CLIENT] Socket connected");
