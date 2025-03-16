@@ -1,16 +1,36 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 
-const ChatRoom = () => {
+const ChatRoom = ({ socket }) => {
     const [messages, setMessages] = useState([]);
     const [inputMessage, setInputMessage] = useState('');
     const [isOpen, setIsOpen] = useState(false);
 
     const handleSendMessage = () => {
         if (inputMessage.trim()) {
-            setMessages([...messages, inputMessage]);
+            socket.send("send_text_chat$" + inputMessage);
             setInputMessage('');
         }
     };
+
+    useEffect(() => {
+        const handleMessage = (event) => {
+            const data = event.data;
+            if (data.startsWith("send_text_chat$")) {
+                try {
+                    const text = data.split("$")[1];
+                    setMessages((prevMessages) => [...prevMessages, text]);
+                    console.log("Messages: " + messages);
+                } catch {
+                    console.log("invalid text")
+                }
+            }
+        };
+        socket.addEventListener("message", handleMessage);
+
+        return () => {
+            socket.removeEventListener("message", handleMessage);
+        }
+    }, [socket]);
 
     return (
         <>

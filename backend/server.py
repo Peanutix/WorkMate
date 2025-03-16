@@ -25,6 +25,7 @@ lobby_questions = {
     'chemistry': ""
 }
 
+
 class User:
     def __init__(self, id, username, websocket):
         self.id = id
@@ -111,8 +112,10 @@ async def message_received(websocket, message):
             await leave_lobby(user_obj, user_obj.lobby_code)
 
     elif context == "send_text_chat":
-        pass
         # Example: you could broadcast chat messages to the lobby
+        user_obj = next((u for u in users if u.websocket == websocket), None)
+        for user in user_lobbies[user_obj.lobby_code]:
+            await user.websocket.send("send_text_chat$" + data)
 
     elif context == "return_login":
         user_obj = next((u for u in users if u.websocket == websocket), None)
@@ -134,7 +137,6 @@ async def message_received(websocket, message):
             print(f"[SERVER] Broadcasting question to lobby {lobby_name}: {lobby_questions[lobby_name]}")
         else:
             print("[SERVER] Error: user not in a lobby or not found")
-
 
     elif context == "drawing":
         drawing_data = json.loads(data)  # Parse JSON drawing data

@@ -71,27 +71,27 @@ function Whiteboard({ socket, username, currentLobby, data }) {
   // send updated canvas to all users
   useEffect(() => {
 
-  if (fabricCanvas) {
-    fabricCanvas.freeDrawingBrush.width = 12
+    if (fabricCanvas) {
+      fabricCanvas.freeDrawingBrush.width = 12
 
-    fabricCanvas.on("mouse:up", (event) => {
-      const canvasImage = fabricCanvas.toDataURL({ format: "png" }); // Convert canvas to image (Base64)
+      fabricCanvas.on("mouse:up", (event) => {
+        const canvasImage = fabricCanvas.toDataURL({ format: "png" }); // Convert canvas to image (Base64)
 
-      const drawingData = {
-        type: "drawing",
-        data: canvasImage, // Send as image
-        username,
-        lobby: currentLobby
+        const drawingData = {
+          type: "drawing",
+          data: canvasImage, // Send as image
+          username,
+          lobby: currentLobby
+        };
+
+        socket.send("drawing$" + JSON.stringify(drawingData)); // Send to WebSocket
+      });
+
+      return () => {
+        fabricCanvas.off("mouse:up");
       };
-
-      socket.send("drawing$" + JSON.stringify(drawingData)); // Send to WebSocket
-    });
-
-    return () => {
-      fabricCanvas.off("mouse:up");
-    };
-  }
-}, [fabricCanvas]);
+    }
+  }, [fabricCanvas]);
 
   // -- Listen for lobby updates
   useEffect(() => {
@@ -162,7 +162,7 @@ function Whiteboard({ socket, username, currentLobby, data }) {
         </div>
 
         {/* Chat Room (Floating) */}
-        <ChatRoom />
+        <ChatRoom socket={socket}/>
       </>
   );
 }
