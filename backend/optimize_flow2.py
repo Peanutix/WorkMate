@@ -4,12 +4,12 @@ from tenacity import retry, wait_exponential, stop_after_attempt
 import orjson
 
 # Define the API endpoint. (Include link from Langflow)
-url = "(YOUR OWN ENDPOINT URL)"
+url = "REPLACE WITH YOUR OWN ENDPOINT"
 
 # Define the headers
 headers = {
     "Content-Type": "application/json",
-    "Authorization": "Bearer (YOUR OWN APPLICATION TOKEN)",  # Replace with your valid token
+    "Authorization": "Bearer REPLACE WITH YOUR OWN APP TOKEN",  # Replace with your valid token
     "Accept-Encoding": "gzip",  # Enable compression
 }
 
